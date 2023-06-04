@@ -106,7 +106,7 @@ double Homeworktool::OptimalBVP(Eigen::Vector3d _start_position,Eigen::Vector3d 
 //    coeffs(1)=24*dp.transpose()*dv;
 //    coeffs(0)=-36*dp.transpose()*dp;
 
-    double[5] coeff;
+    double coeff[5];
     coeff[0] = -36 * std::pow(_start_position(0), 2) + 72 * _start_position(0) * _target_position(0)
             -36 * std::pow(_start_position(1), 2) + 72 * _start_position(1) * _target_position(1)
             -36 * std::pow(_start_position(2), 2) + 72 * _start_position(2) * _target_position(2);
@@ -123,8 +123,15 @@ double Homeworktool::OptimalBVP(Eigen::Vector3d _start_position,Eigen::Vector3d 
          0, 1, 0, -coeff[2],  \
          0, 0, 1, -coeff[3];
 
-    Eigen::EigenSolver<Matrix4d> es(M);
+    Eigen::EigenSolver<Eigen::Matrix4d> es(M);
+    Eigen::Vector4cd roots;
+    roots = es.eigenvalues();
 
+    for (auto & index : roots) {
+        std::cout << index.imag();
+        std::cout << index.real();
+
+    }
 
 
     return optimal_cost;
