@@ -127,12 +127,28 @@ double Homeworktool::OptimalBVP(Eigen::Vector3d _start_position,Eigen::Vector3d 
     Eigen::Vector4cd roots;
     roots = es.eigenvalues();
 
-    for (auto & index : roots) {
-        std::cout << index.imag();
-        std::cout << index.real();
+    double T =0 ;
+    for(int i=0;i<4;i++)
+    {
+        if ( roots(i).imag()*roots(i).imag()==0&&roots(i).real()>0)
+        {
+            double tempT = roots(i).real();
+            Eigen::Vector3d alpha, beta;
+            alpha(0) = (-12 * (_target_position(0) - _start_velocity(0) * tempT  - _start_position(0)) + 6 * ( -_start_velocity(0)) * tempT)/std::pow(tempT, 3);
+            alpha(1) = (-12 * (_target_position(1) - _start_velocity(1) * tempT  - _start_position(1)) + 6 * ( -_start_velocity(1)) * tempT)/std::pow(tempT, 3);
+            alpha(2) = (-12 * (_target_position(2) - _start_velocity(2) * tempT  - _start_position(2)) + 6 * ( -_start_velocity(2)) * tempT)/std::pow(tempT, 3);
+            beta(0) = (6 * (_target_position(0) - _start_velocity(0) * tempT  - _start_position(0)) - 2 * ( -_start_velocity(0)) * tempT)/std::pow(tempT, 3);
+            beta(1) = (6 * (_target_position(1) - _start_velocity(1) * tempT  - _start_position(1)) - 2 * ( -_start_velocity(1)) * tempT)/std::pow(tempT, 3);
+            beta(2) = (6 * (_target_position(2) - _start_velocity(2) * tempT  - _start_position(2)) - 2 * ( -_start_velocity(2)) * tempT)/std::pow(tempT, 3);
+            double cost = tempT + alpha.dot(alpha) * std::pow(tempT, 3) / 3 + alpha.dot(beta) * std::pow(tempT, 2) + beta.dot(beta) * tempT;
 
+            if(cost < optimal_cost)
+            {
+                optimal_cost = cost;
+                T = roots(i).real();
+            }
+        }
     }
-
 
     return optimal_cost;
 }
