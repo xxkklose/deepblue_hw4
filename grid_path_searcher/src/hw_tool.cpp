@@ -87,9 +87,6 @@ double Homeworktool::OptimalBVP(Eigen::Vector3d _start_position,Eigen::Vector3d 
 {
     double optimal_cost = 100000; // this just to initial the optimal_cost, you can delete it 
     /*
-                    
-
-
 
     STEP 2: go to the hw_tool.cpp and finish the function Homeworktool::OptimalBVP
     the solving process has been given in the document
@@ -100,6 +97,34 @@ double Homeworktool::OptimalBVP(Eigen::Vector3d _start_position,Eigen::Vector3d 
 
 
     */
+//    Eigen::Vector3d dp = _target_position- _start_position;
+//    Eigen::Vector3d dv = _start_velocity -_target_velocity;
+//    Eigen::VectorXd coeffs(5);
+//    coeffs(4)=1;
+//    coeffs(3)=0;
+//    coeffs(2)=-4*dv.transpose()*dv;
+//    coeffs(1)=24*dp.transpose()*dv;
+//    coeffs(0)=-36*dp.transpose()*dp;
+
+    double[5] coeff;
+    coeff[0] = -36 * std::pow(_start_position(0), 2) + 72 * _start_position(0) * _target_position(0)
+            -36 * std::pow(_start_position(1), 2) + 72 * _start_position(1) * _target_position(1)
+            -36 * std::pow(_start_position(2), 2) + 72 * _start_position(2) * _target_position(2);
+    coeff[1] = 24 * _target_position(0) * _start_velocity(0) - 24 * _start_position(0) * _start_velocity(0) +
+            24 * _target_position(1) * _start_velocity(1) - 24 * _start_position(1) * _start_velocity(1) +
+            24 * _target_position(2) * _start_velocity(2) - 24 * _start_position(2) * _start_velocity(2);
+    coeff[2] = -4 * std::pow(_start_velocity(0), 2) -4 * std::pow(_start_velocity(1), 2) -4 * std::pow(_start_velocity(2), 2);
+    coeff[3] = 0;
+    coeff[4] = 1;
+
+    Eigen::Matrix4d M;
+    M << 0, 0, 0, -coeff[0],  \
+         1, 0, 0, -coeff[1],  \
+         0, 1, 0, -coeff[2],  \
+         0, 0, 1, -coeff[3];
+
+    Eigen::EigenSolver<Matrix4d> es(M);
+
 
 
     return optimal_cost;

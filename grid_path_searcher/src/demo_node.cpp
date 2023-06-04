@@ -53,6 +53,25 @@ void rcvPointCloudCallBack(const sensor_msgs::PointCloud2 & pointcloud_map);
 void trajectoryLibrary(const Eigen::Vector3d start_pt, const Eigen::Vector3d start_velocity, const Eigen::Vector3d target_pt);
 void visTraLibrary(TrajectoryStatePtr *** TraLibrary);
 
+
+/*
+ * nav_msgs::Path：
+ * {
+ *      Header header
+ *      geometry_msgs/PoseStamped[] poses
+ * }
+ * PoseStamped[]:
+ * {
+ *      Header header
+ *      geometry_msgs::Pose pose
+ * }
+ * geometry_msgs::Pose:
+ * {
+ *      Point position
+ *      Quaternion orientation
+ * }
+ * set target_pt, and call trajectoryLibrary to find trajectory
+ * */
 void rcvWaypointsCallback(const nav_msgs::Path & wp)
 {     
     if( wp.poses[0].pose.position.z < 0.0 || _has_map == false )
@@ -159,6 +178,10 @@ void trajectoryLibrary(const Vector3d start_pt, const Vector3d start_velocity, c
 
 
                     */
+                    for (int l = 0; l < 2; ++l) {
+                        pos(l) += vel(l) * delta_time + acc_input(l) * delta_time * delta_time / 2;
+                        vel(l) += acc_input(l) * delta_time;
+                    }
                     Position.push_back(pos);
                     Velocity.push_back(vel);
                     double coord_x = pos(0);
